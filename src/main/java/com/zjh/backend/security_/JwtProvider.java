@@ -1,7 +1,7 @@
 package com.zjh.backend.security_;
 
 
-import com.zjh.backend.pojo.User;
+import com.zjh.backend.pojo.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

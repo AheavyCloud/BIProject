@@ -1,4 +1,4 @@
-package com.zjh.backend.pojo;
+package com.zjh.backend.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 
