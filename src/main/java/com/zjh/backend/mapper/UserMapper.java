@@ -1,8 +1,10 @@
-package com.zjh.backend.controller.mapper;
+package com.zjh.backend.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zjh.backend.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 /**
 * @author jiahaozhang
@@ -12,6 +14,9 @@ import org.apache.ibatis.annotations.Mapper;
 */
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
+
+    @Select("select * from user where userAccount like #{userAccount}")
+    User selectByUserAccount(@Param("userAccount") String userAccount);
 
 }
 

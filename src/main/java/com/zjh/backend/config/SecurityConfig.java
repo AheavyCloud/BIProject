@@ -1,2 +1,4 @@
-package com.zjh.backend.config;public class SecurityConfig {
+package com.zjh.backend.config;
+
+public class SecurityConfig {
 }
