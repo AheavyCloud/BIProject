@@ -1,6 +1,8 @@
 package com.zjh.backend.exception;
 
-public enum ErrorCode implements ErrorDescription{
+import com.zjh.backend.constant.ErrorDescription;
+
+public enum ErrorCode implements ErrorDescription {
 
     // 元组内创建初始化
     // 1. 参数错误
@@ -12,7 +14,9 @@ public enum ErrorCode implements ErrorDescription{
     // 4. 权限错误
     NO_AUTH_ERROR(40101, ERROR, NOT_AUTH_DESCRIPTION),
     // 5. 系统内部错误
-    SYSTEM_INNER_ERROR(50000, ERROR, SYSTEM_INNER_DESCRIPTION);
+    SYSTEM_INNER_ERROR(50000, ERROR, SYSTEM_INNER_DESCRIPTION),
+    // 请求次数过多
+    TOO_MANY_REQUEST(42900, ERROR, ERROR_TOO_MANY_REQUEST);
 
     // fields
     private final Integer code;

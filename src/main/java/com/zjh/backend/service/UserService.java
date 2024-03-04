@@ -1,6 +1,6 @@
 package com.zjh.backend.service;
-import com.zjh.backend.pojo.requestbody_.userequest.UserLoginRequest;
-import com.zjh.backend.pojo.requestbody_.userequest.UserRegisterRequest;
+import com.zjh.backend.model.dto.requestbody_.userequest.UserLoginRequest;
+import com.zjh.backend.model.dto.requestbody_.userequest.UserRegisterRequest;
 
 public interface UserService {
 

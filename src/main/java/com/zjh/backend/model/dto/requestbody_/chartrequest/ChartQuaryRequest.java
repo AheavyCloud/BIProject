@@ -1,9 +1,15 @@
-package com.zjh.backend.pojo.requestbody_.chartrequest;
+package com.zjh.backend.model.dto.requestbody_.chartrequest;
 
 import com.baomidou.mybatisplus.annotation.TableLogic;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChartQuaryRequest {
 
     private Long id;
@@ -12,11 +18,6 @@ public class ChartQuaryRequest {
      * 分析目标
      */
     private String goal;
-
-    /**
-     * 图表数据
-     */
-    private String chartData;
 
     /**
      * 图表描述

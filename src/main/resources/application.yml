@@ -35,3 +35,15 @@ spring:
     username: root
     password: 199973
     url: jdbc:mysql://localhost:3306/bi_db
+  # 配置redis信息
+  redis:
+    database: 1
+    host: localhost
+    timeout: 5000
+    password:  123456
+    port: 6379
+#    添加apikey
+yuapi:
+  client:
+    access-key: ractjchlw7y4hu0jb7yzqfy1f2qbtehw
+    secret-key: 4tynhkovjqy5tmgrsj52xrxrs34s4npi

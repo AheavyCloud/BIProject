@@ -34,6 +34,7 @@ public class Charts implements Serializable {
      */
     private String genChart;
 
+    private String name;
     /**
      * 图表描述
      * */

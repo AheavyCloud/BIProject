@@ -1,4 +1,4 @@
-package com.zjh.backend.pojo;
+package com.zjh.backend.constant;
 
 public interface SuccessCode {
     public static Integer CODE = 200;

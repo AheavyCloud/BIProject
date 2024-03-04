@@ -1,4 +1,4 @@
-package com.zjh.backend.pojo.requestbody_.chartrequest;
+package com.zjh.backend.model.dto.requestbody_.chartrequest;
 
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.AllArgsConstructor;

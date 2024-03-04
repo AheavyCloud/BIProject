@@ -1,4 +1,4 @@
-package com.zjh.backend.pojo.requestbody_.chartrequest;
+package com.zjh.backend.model.dto.requestbody_.chartrequest;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

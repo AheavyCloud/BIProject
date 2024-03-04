@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjh.backend.mapper.FileMapper">
+
+    <update id="createNewTable" parameterType="string">
+        CREATE TABLE chart_${tableName}(
+            id bigint not null primary key auto_increment,
+            ${fieldName1} int null comment '字段1',
+            ${fieldName2} bigint null comment '字段2');
+    </update>
+
+    <update id="startTransaction" parameterType="com.zjh.backend.pojo.entity.Charts">
+        start transaction ;
+        insert into charts(goal, genChart, genResult, chartType, userId)
+        VALUES(${goal}, ${chartType}, ${genChart}, ${genResult}, ${userId}) ;
+        select max(id) from charts;
+        commit ;
+    </update>
+
+</mapper>

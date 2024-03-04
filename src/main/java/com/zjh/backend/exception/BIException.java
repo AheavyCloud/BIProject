@@ -11,6 +11,11 @@ public class BIException extends RuntimeException {
         this.code = errorCode.getCode();
         this.description = errorCode.getDescription();
     }
+    public BIException(ErrorCode errorCode, String description){
+        super(errorCode.getMsg());
+        this.code = errorCode.getCode();
+        this.description = description;
+    }
 
     public Integer getCode() {
         return code;

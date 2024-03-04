@@ -1,6 +1,8 @@
 package com.zjh.backend.security_;
 
 
+import com.zjh.backend.exception.BIException;
+import com.zjh.backend.exception.ErrorCode;
 import com.zjh.backend.pojo.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -40,7 +42,10 @@ public class JwtProvider {
 
     // 解析JWT
     public static User parseJWT(HttpServletRequest request){
+
         String jwt = request.getHeader("token");
+        if(jwt == null)
+            throw new BIException(ErrorCode.PARAM_ERROR, "用户未登录");
         Claims body = Jwts.parser().setSigningKey(SECRET_KEY)
                 .parseClaimsJws(jwt)
                 .getBody();

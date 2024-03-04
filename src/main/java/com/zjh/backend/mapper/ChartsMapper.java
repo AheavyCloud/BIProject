@@ -4,6 +4,9 @@ import com.zjh.backend.pojo.entity.Charts;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author jiahaozhang
@@ -14,9 +17,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ChartsMapper extends BaseMapper<Charts> {
 
-    @Delete("delete from charts where id = #{id}")
-    public int deleteById(Long id);
-
+    List<Charts> selectChartByChartRequest(Charts charts);
 
 }
 

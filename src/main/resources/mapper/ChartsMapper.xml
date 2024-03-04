@@ -6,6 +6,7 @@
 
     <resultMap id="BaseResultMap" type="com.zjh.backend.pojo.entity.Charts">
             <id property="id" column="id" jdbcType="BIGINT"/>
+            <id property="name" column="name" jdbcType="VARCHAR"/>
             <result property="goal" column="goal" jdbcType="VARCHAR"/>
             <result property="chartType" column="chartType" jdbcType="VARCHAR"/>
             <result property="userId" column="userId" jdbcType="BIGINT"/>
@@ -18,8 +19,25 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,goal,chatType,userId,chartData,
+        id,'name',goal,chatType,userId,chartData,
         genChart,genResult,createTime,
         updateTime,isDelete
     </sql>
+    <select id="selectChartByChartRequest" resultType="com.zjh.backend.pojo.entity.Charts">
+        select * from charts
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="goal != null">
+                or goal like concat(%, #{goal}, %)
+            </if>
+            <if test="chartType != null">
+                or chartType like concat(%, #{chartType}, %)
+            </if>
+            <if test="userId != null">
+                and userId = #{userId}
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -1,26 +1,28 @@
 package com.zjh.backend.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zjh.backend.exception.BIException;
 import com.zjh.backend.exception.ErrorCode;
-import com.zjh.backend.mapper.UserMapper;
-import com.zjh.backend.pojo.Result;
 import com.zjh.backend.pojo.entity.Charts;
-import com.zjh.backend.pojo.requestbody_.chartrequest.ChartAddRequest;
-import com.zjh.backend.pojo.requestbody_.chartrequest.ChartDeleteRequest;
-import com.zjh.backend.pojo.requestbody_.chartrequest.ChartEditRequest;
-import com.zjh.backend.pojo.requestbody_.chartrequest.ChartQuaryRequest;
+import com.zjh.backend.model.dto.requestbody_.chartrequest.ChartAddRequest;
+import com.zjh.backend.model.dto.requestbody_.chartrequest.ChartDeleteRequest;
+import com.zjh.backend.model.dto.requestbody_.chartrequest.ChartEditRequest;
+import com.zjh.backend.model.dto.requestbody_.chartrequest.ChartQuaryRequest;
 import com.zjh.backend.service.ChartsService;
 import com.zjh.backend.mapper.ChartsMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
 * @author jiahaozhang
 * @description 针对表【charts(用户需求信息表)】的数据库操作Service实现
 * @createDate 2024-03-01 22:06:30
 */
+@Slf4j
 @Service
 public class ChartsServiceImpl extends ServiceImpl<ChartsMapper, Charts>
     implements ChartsService{
@@ -47,19 +49,27 @@ public class ChartsServiceImpl extends ServiceImpl<ChartsMapper, Charts>
     @Override
     public Integer doDeleteChart(ChartDeleteRequest chartDeleRequest) {
 
-        Integer i = chartsMapper.deleteById(chartDeleRequest.getId());
+        boolean deleFlag = removeById(chartDeleRequest.getId());
 
-        return i;
+        return deleFlag ? 1: -1;
     }
 
     @Override
     public Integer doEditChart(ChartEditRequest chartEditRequest) {
-        return null;
+        Charts editCharts = new Charts();
+        BeanUtils.copyProperties(chartEditRequest, editCharts);
+        boolean editFlag = updateById(editCharts);
+        return editFlag ? 1 : -1;
+
     }
 
     @Override
-    public Charts doQuaryChartInfo(ChartQuaryRequest chartQuaryRequest) {
-        return null;
+    public List<Charts> doQuaryChartInfo(ChartQuaryRequest chartQuaryRequest) {
+        Charts quaryChart = new Charts();
+        BeanUtils.copyProperties(chartQuaryRequest, quaryChart);
+        log.info("正在查询charts表" + quaryChart);
+        List<Charts> charts = chartsMapper.selectChartByChartRequest(quaryChart);
+        return charts;
     }
 }
 
