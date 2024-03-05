@@ -59,6 +59,16 @@ public class Charts implements Serializable {
     private Date updateTime;
 
     /**
+     * 线程状态
+     * */
+    private String status;
+
+    /**
+     * 执行信息
+     * */
+    private String execMessage;
+
+    /**
      * 是否删除
      */
     @TableLogic

@@ -3,14 +3,15 @@ package com.zjh.backend.controller;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
 import javax.annotation.Resource;
 import javax.print.attribute.standard.PresentationDirection;
 import javax.servlet.http.HttpServletRequest;
 
 
 import cn.hutool.core.io.FileUtil;
-import com.zjh.backend.common.BaseResponse;
-import com.zjh.backend.common.ResultUtils;
+//import com.zjh.backend.common.ResultUtils;
 import com.zjh.backend.constant.FileConstant;
 import com.zjh.backend.exception.BIException;
 import com.zjh.backend.exception.ErrorCode;
@@ -66,6 +67,9 @@ public class FileController {
     private FileService fileService;
 
     @Resource
+    private ThreadPoolExecutor threadPoolExecutor;
+
+    @Resource
     private RedisLimiterManager redisLimiterManager;
     private final long idModel = 1659171950288818178L;
     private final long FILE_MAX_SIZE = 1024 * 1024; // 1M
@@ -108,74 +112,75 @@ public class FileController {
         if(!originalFilename.contains("."))
             throw new BIException(ErrorCode.PARAM_ERROR, "文件名后缀出错");
         String fileSuffix = FileUtil.getSuffix(originalFilename);
-        if(!fileSuffix.equals("xlsx"))
+        if(!(fileSuffix.equals("xlsx") || fileSuffix.equals("xls")))
             throw new BIException(ErrorCode.PARAM_ERROR, "文件格式错误");
 
 
+
+        // 限流：对用户调用此方法进行限流操作 -- 使用 redis 令牌桶算法 实现用户提交次数限流
+        redisLimiterManager.doRateLimitted("userGenAi" + user.getId().toString());
+
+        // 对用户输入进行封装 -- 系统预设 -- 先将数据存放入数据库中
         String result = ExcelUtils.excelToCsv(multipartFile);
-        // 对用户输入进行封装 -- 系统预设
 
         StringBuilder userInData = new StringBuilder();
         userInData.append("分析目标" + goal).append("\n");
         userInData.append("请生成" + chartType).append("\n");
         userInData.append("原始数据：").append(result).append("\n");
 
-        // 对用户调用此方法进行限流操作
-        redisLimiterManager.doRateLimitted("userGenAi" + user.getId().toString());
-        String aiResult = aiManager.dochat(idModel, userInData.toString());
-        String[] split = aiResult.split("【【【【【");
-
-        if(split.length < 3)
-            throw new BIException(ErrorCode.SYSTEM_INNER_ERROR, "AI生成错误");
-        String genCode = split[1].trim(); // .trim将多余的空格和换行去掉
-        String genChat = split[2].trim();
-
-
-        BiResponse biResponse = new BiResponse(genChat, genCode);
-
-        // 存储数据 --> 根据用户id创建新的chart表存储用户数据
-        // 获取了  name goal chartData chartType genChart genResult  userId
-
         Charts genChartData = new Charts();
         genChartData.setName(name);
         genChartData.setGoal(goal);
         genChartData.setChartData(result);
         genChartData.setChartType(chartType);
-        genChartData.setGenChart(genChat);
-        genChartData.setGenResult(genCode);
+        genChartData.setStatus("wait");
         genChartData.setUserId(user.getId());
 
         // 封装数据
-        chartsService.save(genChartData);
-        // 对方法进行限流
+        boolean saveFlag = chartsService.save(genChartData);
+        if(!saveFlag)
+            throw new BIException(ErrorCode.SYSTEM_INNER_ERROR, "数据插入失败");
 
-        // 获取图片id根据
+        // 利用此类将线程需要执行的逻辑放入到线程池！
+        CompletableFuture.runAsync(() ->{
+            // 建议给任务的执行添加超时时间
+            // 先修改任务状态为执行中
+            Charts updateChart = new Charts();
+            updateChart.setId(genChartData.getId());
+            updateChart.setStatus("executing");
+
+            boolean updateFlag = chartsService.updateById(updateChart);
+            if(!updateFlag)
+                throw new BIException(ErrorCode.SYSTEM_INNER_ERROR, "文件状态更新失败 --> chartId: " + updateChart.getId());
+            String aiResult = aiManager.dochat(idModel, userInData.toString());
+            String[] split = aiResult.split("【【【【【");
+
+            if(split.length < 3)
+                throw new BIException(ErrorCode.SYSTEM_INNER_ERROR, "AI生成错误");
+            String genCode = split[1].trim(); // .trim将多余的空格和换行去掉
+            String genChat = split[2].trim();
+
+            // 执行AI模型成功：
+            updateChart.setStatus("succeed");
+            updateChart.setGenResult(genCode);
+            updateChart.setGenChart(genChat);
+            updateFlag = chartsService.updateById(updateChart);
+            if(!updateFlag)
+                throw new BIException(ErrorCode.SYSTEM_INNER_ERROR, "文件状态更新失败 --> chartId: " + updateChart.getId());
 
 
-        return Result.success(biResponse);
+        }, threadPoolExecutor);
+
+        return Result.success;
+
+
+
+
+        // 存储数据 --> 根据用户id创建新的chart表存储用户数据
+        // 获取了  name goal chartData chartType genChart genResult  userId
+
 
 
     }
 
-    /**
-     * 校验文件
-     *
-     * @param multipartFile
-     * @param fileUploadBizEnum 业务类型
-     */
-    private void validFile(MultipartFile multipartFile, FileUploadBizEnum fileUploadBizEnum) {
-        // 文件大小
-        long fileSize = multipartFile.getSize();
-        // 文件后缀
-        String fileSuffix = FileUtil.getSuffix(multipartFile.getOriginalFilename());
-        final long ONE_M = 1024 * 1024L;
-        if (FileUploadBizEnum.USER_AVATAR.equals(fileUploadBizEnum)) {
-            if (fileSize > ONE_M) {
-                throw new BIException(ErrorCode.PARAM_ERROR, "文件大小不能超过 1M");
-            }
-            if (!Arrays.asList("jpeg", "jpg", "svg", "png", "webp").contains(fileSuffix)) {
-                throw new BIException(ErrorCode.PARAM_ERROR, "文件类型错误");
-            }
-        }
-    }
 }

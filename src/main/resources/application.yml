@@ -47,3 +47,9 @@ yuapi:
   client:
     access-key: ractjchlw7y4hu0jb7yzqfy1f2qbtehw
     secret-key: 4tynhkovjqy5tmgrsj52xrxrs34s4npi
+
+threadpool:
+  param:
+    core-pool-size: 4
+    maximum-pool-size: 20
+    keep-alive-time: 50

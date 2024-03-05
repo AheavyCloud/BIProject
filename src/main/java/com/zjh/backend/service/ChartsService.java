@@ -7,6 +7,7 @@ import com.zjh.backend.model.dto.requestbody_.chartrequest.ChartDeleteRequest;
 import com.zjh.backend.model.dto.requestbody_.chartrequest.ChartEditRequest;
 import com.zjh.backend.model.dto.requestbody_.chartrequest.ChartQuaryRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -22,4 +23,6 @@ public interface ChartsService extends IService<Charts> {
     public Integer doEditChart(ChartEditRequest chartEditRequest);
 
     public List<Charts> doQuaryChartInfo(ChartQuaryRequest chartQuaryRequest);
+
+    public List<Charts> dogetChartsList(HttpServletRequest request);
 }

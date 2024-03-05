@@ -19,6 +19,8 @@ public interface ChartsMapper extends BaseMapper<Charts> {
 
     List<Charts> selectChartByChartRequest(Charts charts);
 
+    List<Charts> getBatchChartsByUserId(Long userId);
+
 }
 
 

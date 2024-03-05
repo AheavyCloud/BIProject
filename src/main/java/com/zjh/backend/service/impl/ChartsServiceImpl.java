@@ -8,6 +8,8 @@ import com.zjh.backend.model.dto.requestbody_.chartrequest.ChartAddRequest;
 import com.zjh.backend.model.dto.requestbody_.chartrequest.ChartDeleteRequest;
 import com.zjh.backend.model.dto.requestbody_.chartrequest.ChartEditRequest;
 import com.zjh.backend.model.dto.requestbody_.chartrequest.ChartQuaryRequest;
+import com.zjh.backend.pojo.entity.User;
+import com.zjh.backend.security_.JwtProvider;
 import com.zjh.backend.service.ChartsService;
 import com.zjh.backend.mapper.ChartsMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -70,6 +73,15 @@ public class ChartsServiceImpl extends ServiceImpl<ChartsMapper, Charts>
         log.info("正在查询charts表" + quaryChart);
         List<Charts> charts = chartsMapper.selectChartByChartRequest(quaryChart);
         return charts;
+    }
+
+    @Override
+    public List<Charts> dogetChartsList(HttpServletRequest request) {
+        // 用户鉴权
+        User user = JwtProvider.parseJWT(request); // id userAccount userRole
+        Long id = user.getId();
+        List<Charts> chartsList = chartsMapper.getBatchChartsByUserId(id);
+        return chartsList;
     }
 }
 

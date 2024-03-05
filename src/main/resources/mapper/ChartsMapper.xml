@@ -12,6 +12,8 @@
             <result property="userId" column="userId" jdbcType="BIGINT"/>
             <result property="chartData" column="chartData" jdbcType="VARCHAR"/>
             <result property="genChart" column="genChart" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="VARCHAR"/>
+            <result property="execMessage" column="execMessage" jdbcType="VARCHAR"/>
             <result property="genResult" column="genResult" jdbcType="VARCHAR"/>
             <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
@@ -20,7 +22,7 @@
 
     <sql id="Base_Column_List">
         id,'name',goal,chatType,userId,chartData,
-        genChart,genResult,createTime,
+        genChart,'status',execMessage,genResult,createTime,
         updateTime,isDelete
     </sql>
     <select id="selectChartByChartRequest" resultType="com.zjh.backend.pojo.entity.Charts">
@@ -39,5 +41,8 @@
                 and userId = #{userId}
             </if>
         </where>
+    </select>
+    <select id="getBatchChartsByUserId" resultType="com.zjh.backend.pojo.entity.Charts">
+        select id, genChart, chartType, genResult, userId, 'status', updateTime from charts where userId = #{userId}
     </select>
 </mapper>

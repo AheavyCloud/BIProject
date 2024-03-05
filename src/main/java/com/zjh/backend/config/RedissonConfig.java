@@ -26,8 +26,8 @@ public class RedissonConfig {
         // redis 配置 单机模式
         config.useSingleServer()
                 .setDatabase(database) // 数据库应该使业务数据库和限流数据库分开
-                .setAddress("redis://" + host +":" + port)
-                .setPassword(password);
+                .setAddress("redis://" + host +":" + port);
+//                .setPassword(password);
         // 利用Client创建redis客户端，然后返回
         RedissonClient redisson = Redisson.create(config);
         return redisson;
