@@ -5,7 +5,6 @@ import com.zjh.backend.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.RestController;
 
 @Data
 @NoArgsConstructor

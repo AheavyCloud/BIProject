@@ -17,6 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -30,7 +31,7 @@ import java.util.List;
 public class ChartsServiceImpl extends ServiceImpl<ChartsMapper, Charts>
     implements ChartsService{
 
-    @Autowired
+    @Resource
     ChartsMapper chartsMapper;
     @Override
     public Long doAddChart(ChartAddRequest chartInfo) {
